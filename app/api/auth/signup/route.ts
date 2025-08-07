@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { validateCollegeEmail, createVerificationToken } from '@/lib/verification'
-import { sendVerificationEmail } from '@/lib/email-service'
+import { validateCollegeEmail } from '@/lib/verification'
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,24 +80,29 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         )
       } else {
-        // User exists but not verified - resend verification email
+        // User exists but not verified - use Supabase resend
         console.log('Resending verification email for existing user')
-        const token = await createVerificationToken(existingUser.id)
-        if (token) {
-          const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${token}`
-          const collegeName = emailValidation.collegeName || 'your college'
-          await sendVerificationEmail({
-            email: email,
-            name: name,
-            verificationUrl: verificationUrl
-          })
-          
-          return NextResponse.json({
-            message: 'Verification email sent',
-            email: email,
-            collegeName: collegeName
-          })
+        
+        const { error } = await supabase.auth.resend({
+          type: 'signup',
+          email: email,
+          options: {
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/confirm`
+          }
+        })
+        
+        if (error) {
+          return NextResponse.json(
+            { error: 'Failed to resend verification email: ' + error.message },
+            { status: 500 }
+          )
         }
+        
+        return NextResponse.json({
+          message: 'Verification email sent',
+          email: email,
+          collegeName: emailValidation.collegeName || 'your college'
+        })
       }
     }
 

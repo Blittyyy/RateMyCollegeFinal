@@ -5,6 +5,7 @@ import { CheckCircle, Warning, ArrowRight } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { StickyNav } from "@/components/sticky-nav"
 import Link from "next/link"
+import { supabase } from "@/lib/supabase"
 
 export default function VerifyEmailPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'expired'>('loading')
@@ -69,20 +70,19 @@ export default function VerifyEmailPage() {
 
   const resendVerification = async () => {
     try {
-      const response = await fetch('/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+      // Use Supabase's built-in resend functionality
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/confirm`
+        }
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setMessage('Verification email sent! Please check your inbox.')
+      if (error) {
+        setMessage(error.message || 'Failed to resend verification email.')
       } else {
-        setMessage(data.error || 'Failed to resend verification email.')
+        setMessage('Verification email sent! Please check your inbox.')
       }
     } catch (error) {
       console.error('Resend error:', error)
