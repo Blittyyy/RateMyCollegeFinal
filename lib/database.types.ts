@@ -119,6 +119,7 @@ export interface Database {
           overall_rating: number
           comment: string
           tags: string[] | null
+          category_ratings: { [key: string]: number } | null
           anonymous: boolean
           helpful_count: number
           created_at: string
@@ -133,6 +134,7 @@ export interface Database {
           overall_rating: number
           comment: string
           tags?: string[] | null
+          category_ratings?: { [key: string]: number } | null
           anonymous?: boolean
           helpful_count?: number
           created_at?: string
@@ -147,6 +149,7 @@ export interface Database {
           overall_rating?: number
           comment?: string
           tags?: string[] | null
+          category_ratings?: { [key: string]: number } | null
           anonymous?: boolean
           helpful_count?: number
           created_at?: string

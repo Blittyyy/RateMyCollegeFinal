@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your RateMyCollege Account</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1F2937;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #F95F62 0%, #e54e51 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin: 0;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1F2937;
+            margin-bottom: 16px;
+        }
+        .message {
+            font-size: 16px;
+            color: #6B7280;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .verify-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #F95F62 0%, #e54e51 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(249, 95, 98, 0.3);
+        }
+        .verify-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px -1px rgba(249, 95, 98, 0.4);
+        }
+        .features {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 32px 0;
+        }
+        .features h3 {
+            color: #1F2937;
+            font-size: 18px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            color: #6B7280;
+            position: relative;
+            padding-left: 24px;
+        }
+        .feature-list li:before {
+            content: "✓";
+            color: #F95F62;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .footer {
+            background-color: #f8fafc;
+            padding: 24px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            color: #9CA3AF;
+            font-size: 14px;
+            margin: 0;
+        }
+        .manual-link {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: #f3f4f6;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .manual-link a {
+            color: #F95F62;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .manual-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .header, .content, .footer {
+                padding: 20px;
+            }
+            .greeting {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">RateMyCollege</div>
+            <p class="tagline">Share your college experience, help others choose wisely</p>
+        </div>
+        
+        <div class="content">
+            <h1 class="greeting">Welcome to RateMyCollege! 🎓</h1>
+            
+            <p class="message">
+                Thanks for joining our community of students and alumni! To get started sharing your college experience and helping future students make informed decisions, please verify your email address.
+            </p>
+            
+            <div class="button-container">
+                <a href="{{ .ConfirmationURL }}" class="verify-button">
+                    Verify My Email Address
+                </a>
+            </div>
+            
+            <div class="features">
+                <h3>What you can do after verification:</h3>
+                <ul class="feature-list">
+                    <li>Write detailed reviews about your college experience</li>
+                    <li>Rate specific aspects like academics, campus life, and housing</li>
+                    <li>Help future students make informed decisions</li>
+                    <li>Connect with other students and alumni</li>
+                    <li>Access exclusive college insights and data</li>
+                </ul>
+            </div>
+            
+            <p class="message">
+                If the button above doesn't work, you can copy and paste this link into your browser:
+            </p>
+            
+            <div class="manual-link">
+                <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+            </div>
+            
+            <p class="message" style="font-size: 14px; color: #9CA3AF; margin-top: 32px;">
+                This link will expire in 24 hours. If you didn't create a RateMyCollege account, you can safely ignore this email.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                © 2024 RateMyCollege. All rights reserved.<br>
+                Questions? Contact us at support@ratemycollege.com
+            </p>
+        </div>
+    </div>
+</body>
+</html> 

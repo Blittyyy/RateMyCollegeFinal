@@ -14,6 +14,16 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
+    const success = urlParams.get('success')
+    const emailParam = urlParams.get('email')
+
+    if (success === 'true' && emailParam) {
+      // Supabase confirmation successful
+      setStatus('success')
+      setMessage('Email verified successfully! You can now post reviews and access all features.')
+      setEmail(emailParam)
+      return
+    }
 
     if (!token) {
       setStatus('error')
@@ -21,7 +31,7 @@ export default function VerifyEmailPage() {
       return
     }
 
-    // Verify the token
+    // Verify the token (for legacy custom verification)
     verifyEmail(token)
   }, [])
 

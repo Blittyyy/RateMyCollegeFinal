@@ -5,8 +5,39 @@ import { sendVerificationEmail } from '@/lib/email-service'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, name, password } = await request.json()
+    const { email, name, password, captchaToken } = await request.json()
     console.log('Signup request received:', { email, name })
+
+    // Verify CAPTCHA token
+    if (!captchaToken) {
+      return NextResponse.json(
+        { error: 'Security check required' },
+        { status: 400 }
+      )
+    }
+
+    // Verify with Cloudflare Turnstile
+    const captchaResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+        response: captchaToken,
+        remoteip: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+      })
+    })
+
+    const captchaResult = await captchaResponse.json()
+    
+    if (!captchaResult.success) {
+      console.error('CAPTCHA verification failed:', captchaResult)
+      return NextResponse.json(
+        { error: 'Security check failed. Please try again.' },
+        { status: 400 }
+      )
+    }
 
     // Validate input
     if (!email || !name || !password) {
@@ -78,7 +109,8 @@ export async function POST(request: NextRequest) {
         data: {
           name: name,
           full_name: name
-        }
+        },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/confirm`
       }
     })
 
@@ -131,7 +163,7 @@ export async function POST(request: NextRequest) {
         id: authData.user.id, // Use the same ID as auth user
         email,
         name,
-        email_verified: isCollegeEmail, // Only .edu emails are auto-verified
+        email_verified: false, // Will be verified when Supabase email is confirmed
         verification_type: isCollegeEmail ? 'student' : null, // .edu = student, others = null (pending alumni)
         college_id: collegeId
       })
@@ -150,30 +182,9 @@ export async function POST(request: NextRequest) {
 
     // Handle verification based on email type
     if (isCollegeEmail) {
-      // For college emails, send verification email
-      console.log('Creating verification token for college email')
-      const token = await createVerificationToken(user.id)
-      if (!token) {
-        return NextResponse.json(
-          { error: 'Failed to create verification token' },
-          { status: 500 }
-        )
-      }
-
-      const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${token}`
-      const emailResult = await sendVerificationEmail({
-        email: email,
-        name: name,
-        verificationUrl: verificationUrl
-      })
-
-      if (!emailResult.success) {
-        return NextResponse.json(
-          { error: 'Account created but failed to send verification email' },
-          { status: 500 }
-        )
-      }
-
+      // For college emails, rely on Supabase email verification
+      console.log('College email detected, using Supabase email verification')
+      
       return NextResponse.json({
         message: 'Account created successfully! Please check your email to verify your account.',
         email: email,

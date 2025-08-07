@@ -44,34 +44,28 @@ const starLabels = [
   "Above Average", "Good", "Very Good", "Excellent", "Outstanding"
 ]
 
-// Available tags for reviews
+// Available tags for reviews (streamlined)
 const availableTags = [
-  { id: "dorms", name: "Dorms", icon: House, description: "Housing and residential life" },
-  { id: "food", name: "Food", icon: ForkKnife, description: "Dining halls and campus food" },
-  { id: "professors", name: "Professors", icon: GraduationCap, description: "Teaching quality and faculty" },
-  { id: "party-life", name: "Party Life", icon: Confetti, description: "Social events and nightlife" },
-  { id: "admin", name: "Admin", icon: Buildings, description: "Administration and bureaucracy" },
-  { id: "campus-vibe", name: "Campus Vibe", icon: Users, description: "Overall atmosphere and culture" },
-  { id: "mental-health", name: "Mental Health", icon: Heart, description: "Mental health resources" },
-  { id: "athletics", name: "Athletics", icon: Trophy, description: "Sports and athletic programs" },
-  { id: "safety", name: "Safety", icon: Shield, description: "Campus security and safety" },
-  { id: "location", name: "Location", icon: MapPin, description: "Campus location and area" },
-  { id: "academics", name: "Academics", icon: BookOpen, description: "Academic programs and rigor" },
+  { id: "academics", name: "Academics", icon: GraduationCap, description: "Classes, professors, and academic quality" },
+  { id: "campus-life", name: "Campus Life", icon: Users, description: "Overall atmosphere, culture, and social scene" },
+  { id: "housing", name: "Housing", icon: House, description: "Dorms, apartments, and residential life" },
+  { id: "dining", name: "Dining", icon: ForkKnife, description: "Food quality, dining halls, and meal plans" },
+  { id: "administration", name: "Administration", icon: Buildings, description: "Admin processes, bureaucracy, and support" },
+  { id: "safety", name: "Safety", icon: Shield, description: "Campus security and personal safety" },
+  { id: "location", name: "Location", icon: MapPin, description: "Campus area, transportation, and surroundings" },
+  { id: "athletics", name: "Athletics", icon: Trophy, description: "Sports, gym facilities, and athletic programs" },
 ]
 
-// Tag suggestion keywords
+// Tag suggestion keywords (updated for streamlined categories)
 const tagKeywords = {
-  dorms: ['dorm', 'dorms', 'housing', 'room', 'rooms', 'residence', 'residential', 'hall', 'apartment', 'suite', 'living', 'accommodation'],
-  food: ['food', 'dining', 'meal', 'cafeteria', 'café', 'restaurant', 'campus food', 'dining hall', 'meal plan', 'catering', 'canteen'],
-  professors: ['professor', 'professors', 'teacher', 'teachers', 'faculty', 'instructor', 'lecturer', 'teaching', 'office hours', 'academic staff'],
-  'party-life': ['party', 'parties', 'social', 'nightlife', 'greek', 'fraternity', 'sorority', 'events', 'clubs', 'bars', 'drinking', 'fun'],
-  admin: ['administration', 'admin', 'bureaucracy', 'paperwork', 'registration', 'admissions', 'financial aid', 'billing', 'records'],
-  'campus-vibe': ['atmosphere', 'culture', 'community', 'vibe', 'environment', 'feel', 'mood', 'energy', 'spirit', 'campus life'],
-  'mental-health': ['mental health', 'counseling', 'therapy', 'support', 'wellness', 'stress', 'anxiety', 'depression', 'counselor', 'psychologist'],
-  athletics: ['sports', 'athletics', 'football', 'basketball', 'gym', 'fitness', 'workout', 'team', 'athlete', 'stadium', 'rec center'],
+  academics: ['academics', 'classes', 'courses', 'curriculum', 'major', 'minor', 'degree', 'study', 'learning', 'education', 'academic', 'professor', 'professors', 'teacher', 'teachers', 'faculty', 'instructor', 'lecturer', 'teaching', 'office hours'],
+  'campus-life': ['atmosphere', 'culture', 'community', 'vibe', 'environment', 'feel', 'mood', 'energy', 'spirit', 'campus life', 'party', 'parties', 'social', 'nightlife', 'greek', 'fraternity', 'sorority', 'events', 'clubs', 'bars', 'drinking', 'fun', 'mental health', 'counseling', 'therapy', 'support', 'wellness', 'stress', 'anxiety', 'depression'],
+  housing: ['dorm', 'dorms', 'housing', 'room', 'rooms', 'residence', 'residential', 'hall', 'apartment', 'suite', 'living', 'accommodation'],
+  dining: ['food', 'dining', 'meal', 'cafeteria', 'café', 'restaurant', 'campus food', 'dining hall', 'meal plan', 'catering', 'canteen'],
+  administration: ['administration', 'admin', 'bureaucracy', 'paperwork', 'registration', 'admissions', 'financial aid', 'billing', 'records'],
   safety: ['safety', 'security', 'police', 'campus security', 'emergency', 'crime', 'safe', 'unsafe', 'patrol', 'escort'],
   location: ['location', 'area', 'neighborhood', 'city', 'town', 'downtown', 'suburban', 'rural', 'transportation', 'parking', 'walking'],
-  academics: ['academics', 'classes', 'courses', 'curriculum', 'major', 'minor', 'degree', 'study', 'learning', 'education', 'academic']
+  athletics: ['sports', 'athletics', 'football', 'basketball', 'gym', 'fitness', 'workout', 'team', 'athlete', 'stadium', 'rec center']
 }
 
 // Draft storage key
@@ -84,6 +78,8 @@ export default function AddReviewPage() {
     review: "",
     selectedTags: [] as string[],
   })
+  const [categoryRatings, setCategoryRatings] = useState<{[key: string]: number}>({})
+  const [hoveredCategoryStars, setHoveredCategoryStars] = useState<{[key: string]: {star: number, isHalf: boolean} | null}>({})
   const [searchQuery, setSearchQuery] = useState("")
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [hoveredRating, setHoveredRating] = useState(0)
@@ -135,6 +131,8 @@ export default function AddReviewPage() {
   useEffect(() => {
     generateTagSuggestions(formData.review)
   }, [formData.review, generateTagSuggestions])
+
+
 
   // Load draft on component mount
   useEffect(() => {
@@ -226,12 +224,26 @@ export default function AddReviewPage() {
   }
 
   const handleTagToggle = (tagId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedTags: prev.selectedTags.includes(tagId)
+    setFormData(prev => {
+      const newTags = prev.selectedTags.includes(tagId)
         ? prev.selectedTags.filter(id => id !== tagId)
         : [...prev.selectedTags, tagId]
-    }))
+      
+      return {
+        ...prev,
+        selectedTags: newTags
+      }
+    })
+    
+    // Remove rating when tag is deselected
+    if (formData.selectedTags.includes(tagId)) {
+      setCategoryRatings(prev => {
+        const newRatings = { ...prev }
+        delete newRatings[tagId]
+        return newRatings
+      })
+    }
+    
     setHasUnsavedChanges(true)
   }
 
@@ -243,11 +255,21 @@ export default function AddReviewPage() {
     setHasUnsavedChanges(true)
   }
 
+  const handleCategoryRating = (tagId: string, baseRating: number, isHalf: boolean) => {
+    const rating = isHalf ? baseRating - 0.5 : baseRating
+    setCategoryRatings(prev => ({
+      ...prev,
+      [tagId]: rating
+    }))
+    setHasUnsavedChanges(true)
+  }
+
   const handleClearAllTags = () => {
     setFormData(prev => ({
       ...prev,
       selectedTags: []
     }))
+    setCategoryRatings({})
     setHasUnsavedChanges(true)
   }
 
@@ -285,6 +307,7 @@ export default function AddReviewPage() {
         category: formData.selectedTags[0] || 'professors', // Use first tag as category or 'professors' as fallback
         comment: formData.review,
         tags: formData.selectedTags, // Add tags array
+        category_ratings: categoryRatings, // Add individual category ratings
         anonymous: false // All reviews are anonymous by default
       }
 
@@ -310,6 +333,8 @@ export default function AddReviewPage() {
         review: "",
         selectedTags: [],
       })
+      setCategoryRatings({})
+      setHoveredCategoryStars({})
       setSearchQuery("")
 
       // Redirect to the college page after 2 seconds
@@ -334,7 +359,7 @@ export default function AddReviewPage() {
 
   const isFormValid = formData.college && formData.overallRating > 0 && formData.review.trim()
 
-  const renderStars = (rating: number, interactive = false) => {
+  const renderStars = (rating: number, interactive = false, onRatingChange?: (baseRating: number, isHalf: boolean) => void, hoverState?: {star: number, isHalf: boolean} | null, onHoverChange?: (hoverState: {star: number, isHalf: boolean} | null) => void, size: 'small' | 'normal' = 'normal') => {
     return (
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => {
@@ -345,13 +370,13 @@ export default function AddReviewPage() {
           let isHovered = false
           let isHalfHovered = false
           
-          if (hoveredStar) {
-            if (hoveredStar.star > star) {
+          if (hoverState) {
+            if (hoverState.star > star) {
               // Previous stars should be fully highlighted
               isHovered = true
-            } else if (hoveredStar.star === star) {
+            } else if (hoverState.star === star) {
               // Current star shows half or full based on hover position
-              if (hoveredStar.isHalf) {
+              if (hoverState.isHalf) {
                 isHalfHovered = true
               } else {
                 isHovered = true
@@ -363,7 +388,7 @@ export default function AddReviewPage() {
             <div key={star} className="relative">
               {/* Base Star */}
               <Star
-                size={interactive ? 32 : 20}
+                size={size === 'small' ? (interactive ? 16 : 14) : (interactive ? 32 : 24)}
                 weight="regular"
                 className="text-gray-300"
               />
@@ -371,7 +396,7 @@ export default function AddReviewPage() {
               {/* Filled Star Overlay */}
               {(isFullStar || isHovered) && (
                 <Star
-                  size={interactive ? 32 : 20}
+                  size={size === 'small' ? (interactive ? 16 : 14) : (interactive ? 32 : 24)}
                   weight="duotone"
                   className="text-[#F95F62] absolute inset-0"
                 />
@@ -381,7 +406,7 @@ export default function AddReviewPage() {
               {(isHalfStar || isHalfHovered) && !isFullStar && !isHovered && (
                 <div className="absolute inset-0 overflow-hidden">
                   <Star
-                    size={interactive ? 32 : 20}
+                    size={size === 'small' ? (interactive ? 16 : 14) : (interactive ? 32 : 24)}
                     weight="duotone"
                     className="text-[#F95F62]"
                     style={{ clipPath: 'inset(0 50% 0 0)' }}
@@ -390,7 +415,7 @@ export default function AddReviewPage() {
               )}
               
               {/* Interactive Click Areas */}
-              {interactive && (
+              {interactive && onRatingChange && onHoverChange && (
                 <button
                   type="button"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -398,32 +423,22 @@ export default function AddReviewPage() {
                     const rect = e.currentTarget.getBoundingClientRect()
                     const x = e.clientX - rect.left
                     const isLeftHalf = x < rect.width / 2
-                    setHoveredStar({ star, isHalf: isLeftHalf })
-                    setHoveredRating(isLeftHalf ? star - 0.5 : star)
+                    onHoverChange({ star, isHalf: isLeftHalf })
                   }}
                   onMouseMove={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect()
                     const x = e.clientX - rect.left
                     const isLeftHalf = x < rect.width / 2
-                    setHoveredStar({ star, isHalf: isLeftHalf })
-                    setHoveredRating(isLeftHalf ? star - 0.5 : star)
+                    onHoverChange({ star, isHalf: isLeftHalf })
                   }}
                   onMouseLeave={() => {
-                    setHoveredStar(null)
-                    setHoveredRating(0)
+                    onHoverChange(null)
                   }}
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect()
                     const x = e.clientX - rect.left
                     const isLeftHalf = x < rect.width / 2
-                    
-                    if (isLeftHalf) {
-                      console.log('Half star clicked:', star - 0.5)
-                      handleHalfStarClick(star - 1, true)
-                    } else {
-                      console.log('Full star clicked:', star)
-                      handleHalfStarClick(star, false)
-                    }
+                    onRatingChange(star, isLeftHalf)
                   }}
                 />
               )}
@@ -538,10 +553,19 @@ export default function AddReviewPage() {
                   How would you rate your experience at {formData.college || '[College Name]'}? *
                 </Label>
                 <div className="flex flex-col space-y-4">
-                  {renderStars(formData.overallRating, true)}
-                  {(hoveredRating || formData.overallRating) > 0 && (
-                    <div className="text-lg font-medium text-[#1F2937]">
-                      {starLabels[Math.floor((hoveredRating || formData.overallRating) * 2 - 1)]}
+                  {renderStars(
+                    formData.overallRating, 
+                    true, 
+                    (baseRating, isHalf) => {
+                      const rating = isHalf ? baseRating - 0.5 : baseRating
+                      setFormData(prev => ({ ...prev, overallRating: rating }))
+                    },
+                    hoveredStar,
+                    setHoveredStar
+                  )}
+                  {(hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : formData.overallRating) > 0 && (
+                    <div className="text-xl font-semibold text-[#F95F62] tracking-wide">
+                      {starLabels[Math.floor(((hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : formData.overallRating) * 2) - 1)]}
                     </div>
                   )}
                 </div>
@@ -563,10 +587,20 @@ export default function AddReviewPage() {
                         setHasUnsavedChanges(true)
                       }
                     }}
-                    className="min-h-[120px] resize-none border-gray-300 focus:border-[#F95F62] focus:ring-2 focus:ring-[#F95F62]/20"
+                    className="min-h-[40px] max-h-[200px] resize-none border-gray-300 focus:border-[#F95F62] focus:ring-2 focus:ring-[#F95F62]/20 transition-all duration-200"
                     maxLength={1000}
+                    style={{
+                      height: 'auto',
+                      minHeight: '40px',
+                      maxHeight: formData.review.length > 100 ? '200px' : '40px'
+                    }}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = 'auto'
+                      target.style.height = Math.min(target.scrollHeight, 200) + 'px'
+                    }}
                   />
-                  <div className="absolute bottom-3 right-3 text-sm text-[#6B7280]">{formData.review.length}/1000</div>
+                  <div className="absolute bottom-2 right-2 text-xs text-[#6B7280]">{formData.review.length}/1000</div>
                 </div>
               </div>
 
@@ -632,33 +666,67 @@ export default function AddReviewPage() {
                   )}
                 </div>
 
-                {/* Mobile-optimized tag grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {/* Tag grid with ratings - compact layout */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {availableTags.map((tag) => {
                     const Icon = tag.icon
                     const isSelected = formData.selectedTags.includes(tag.id)
+                    const rating = categoryRatings[tag.id] || 0
+                    const hoverState = hoveredCategoryStars[tag.id] || null
+                    
                     return (
-                      <div key={tag.id} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                        <Checkbox
-                          id={tag.id}
-                          checked={isSelected}
-                          onCheckedChange={() => handleTagToggle(tag.id)}
-                          className="data-[state=checked]:bg-[#F95F62] data-[state=checked]:border-[#F95F62]"
-                        />
-                        <Label
-                          htmlFor={tag.id}
-                          className="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-[#F95F62] transition-colors flex-1"
-                        >
-                          <Icon size={16} weight="duotone" />
-                          {tag.name}
-                        </Label>
+                      <div key={tag.id} className={`border rounded-md p-2 transition-all duration-200 ${
+                        isSelected ? 'border-[#F95F62] bg-[#F95F62]/5' : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}>
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id={tag.id}
+                              checked={isSelected}
+                              onCheckedChange={() => handleTagToggle(tag.id)}
+                              className="data-[state=checked]:bg-[#F95F62] data-[state=checked]:border-[#F95F62] scale-90"
+                            />
+                            <Label
+                              htmlFor={tag.id}
+                              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-1 cursor-pointer"
+                            >
+                              <Icon size={14} weight="regular" className="text-[#6B7280]" />
+                              {tag.name}
+                            </Label>
+                          </div>
+                          {isSelected && (
+                            <span className="text-xs text-[#6B7280]">
+                              {rating > 0 ? `${rating}/5` : 'Rate'}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Rating stars for selected tags */}
+                        {isSelected && (
+                          <div className="flex items-center gap-2 mt-1">
+                            {renderStars(
+                              rating, 
+                              true, 
+                              (baseRating, isHalf) => handleCategoryRating(tag.id, baseRating, isHalf),
+                              hoverState,
+                              (hoverState) => setHoveredCategoryStars(prev => ({
+                                ...prev,
+                                [tag.id]: hoverState
+                              })),
+                              'small'
+                            )}
+                            <span className="text-xs text-[#6B7280]">
+                              {rating > 0 ? `${rating}/5` : 'Click'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )
                   })}
                 </div>
                 <p className="text-sm text-[#6B7280] mt-3 flex items-center gap-2">
                   <Info size={16} weight="regular" />
-                  These tags help future students filter reviews. Select any that apply.
+                  Select and rate the aspects that apply to your experience. These ratings help others filter reviews by category.
                 </p>
               </div>
 

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { StickyNav } from "@/components/sticky-nav"
+import { TurnstileCaptcha } from "@/components/turnstile-captcha"
 import Link from "next/link"
 
 export default function SignupPage() {
@@ -24,6 +25,8 @@ export default function SignupPage() {
   const [isPageLoaded, setIsPageLoaded] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const [captchaError, setCaptchaError] = useState('')
 
   useEffect(() => {
     // Trigger page load animation
@@ -66,6 +69,13 @@ export default function SignupPage() {
       return
     }
 
+    // Validate CAPTCHA
+    if (!captchaToken) {
+      setCaptchaError('Please complete the security check')
+      setIsLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -76,6 +86,7 @@ export default function SignupPage() {
           email: formData.email,
           name: formData.fullName,
           password: formData.password,
+          captchaToken: captchaToken,
         }),
       })
 
@@ -310,11 +321,32 @@ export default function SignupPage() {
                 )}
               </div>
 
+              {/* CAPTCHA */}
+              <div className={`mt-4 auth-fade-in auth-stagger-4 ${isPageLoaded ? "" : "opacity-0"}`}>
+                <TurnstileCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token)
+                    setCaptchaError('')
+                  }}
+                  onError={() => {
+                    setCaptchaError('Security check failed. Please try again.')
+                  }}
+                  onExpire={() => {
+                    setCaptchaToken('')
+                    setCaptchaError('Security check expired. Please complete it again.')
+                  }}
+                  className="flex justify-center"
+                />
+                {captchaError && (
+                  <p className="mt-2 text-xs text-red-600 text-center">{captchaError}</p>
+                )}
+              </div>
+
               {/* Submit Button */}
-              <div className={`pt-2 auth-fade-in auth-stagger-4 ${isPageLoaded ? "" : "opacity-0"}`}>
+              <div className={`pt-2 auth-fade-in auth-stagger-5 ${isPageLoaded ? "" : "opacity-0"}`}>
                 <Button
                   type="submit"
-                  disabled={isLoading || !passwordsMatch || success}
+                  disabled={isLoading || !passwordsMatch || success || !captchaToken}
                   className="auth-button w-full h-11 bg-[#F95F62] hover:bg-[#e54e51] text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:brightness-100"
                 >
                   {isLoading ? "Creating Account..." : success ? "Account Created!" : "Sign Up"}
