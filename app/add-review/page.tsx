@@ -189,10 +189,10 @@ export default function AddReviewPage() {
           console.error('Error:', error)
         } else {
           setColleges(data || [])
-        }
-      } catch (error) {
+      }
+    } catch (error) {
         console.error('Error:', error)
-      } finally {
+    } finally {
         setIsLoadingColleges(false)
       }
     }
@@ -323,7 +323,7 @@ export default function AddReviewPage() {
       }
 
       console.log("Review submitted successfully:", formData)
-      setShowSuccess(true)
+    setShowSuccess(true)
       clearDraft() // Clear draft after successful submission
 
       // Reset form
@@ -384,7 +384,7 @@ export default function AddReviewPage() {
             }
           }
           
-          return (
+    return (
             <div key={star} className="relative">
               {/* Base Star */}
               <Star
@@ -411,7 +411,7 @@ export default function AddReviewPage() {
                     className="text-[#F95F62]"
                     style={{ clipPath: 'inset(0 50% 0 0)' }}
                   />
-                </div>
+              </div>
               )}
               
               {/* Interactive Click Areas */}
@@ -485,8 +485,8 @@ export default function AddReviewPage() {
                 <Trash size={14} weight="regular" />
                 <span className="ml-1 text-xs">Clear</span>
               </Button>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Simple Form Card */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
@@ -620,25 +620,25 @@ export default function AddReviewPage() {
                       <Info size={16} weight="regular" className="text-green-600" />
                       <span className="text-sm font-medium text-green-700">Suggested tags based on your review:</span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
                       {suggestedTags.map((tagId) => {
                         const tag = availableTags.find(t => t.id === tagId)
                         if (!tag) return null
                         const Icon = tag.icon
-                        return (
-                          <button
+                    return (
+                      <button
                             key={tagId}
-                            type="button"
+                        type="button"
                             onClick={() => handleTagToggle(tagId)}
                             className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium hover:bg-green-200 transition-colors"
                           >
                             <Icon size={14} weight="duotone" />
                             {tag.name}
                             <span className="text-green-600">+</span>
-                          </button>
-                        )
-                      })}
-                    </div>
+                      </button>
+                    )
+                  })}
+                </div>
                   </div>
                 )}
                 
@@ -666,8 +666,8 @@ export default function AddReviewPage() {
                     <span className="text-xs text-[#6B7280] self-center">
                       {formData.selectedTags.length} selected
                     </span>
-                  )}
-                </div>
+                )}
+              </div>
 
                 {/* Tag grid with ratings - compact layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -721,9 +721,9 @@ export default function AddReviewPage() {
                             <span className="text-xs text-[#6B7280]">
                               {rating > 0 ? `${rating}/5` : 'Click'}
                             </span>
-                          </div>
+                    </div>
                         )}
-                      </div>
+                  </div>
                     )
                   })}
                 </div>
@@ -763,11 +763,11 @@ export default function AddReviewPage() {
                   {isSubmitting ? "Submitting Review..." : "Submit Review"}
                 </Button>
               </div>
-              {!isFormValid && (
+                {!isFormValid && (
                 <p className="text-sm text-[#6B7280] text-center">
-                  Please fill in all required fields to submit your review
-                </p>
-              )}
+                    Please fill in all required fields to submit your review
+                  </p>
+                )}
             </form>
           </div>
         </div>

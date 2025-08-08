@@ -187,6 +187,40 @@ export async function getCollegeRatings(collegeId: string) {
   return data
 }
 
+// Calculate category ratings from individual review ratings
+export async function getCategoryRatings(collegeId: string) {
+  const { data: reviews, error } = await supabase
+    .from('reviews')
+    .select('category_ratings')
+    .eq('college_id', collegeId)
+    .not('category_ratings', 'is', null)
+  
+  if (error) throw error
+  
+  const categoryTotals: Record<string, { sum: number; count: number }> = {}
+  
+  reviews.forEach(review => {
+    if (review.category_ratings) {
+      Object.entries(review.category_ratings).forEach(([category, rating]) => {
+        if (typeof rating === 'number' && rating > 0) {
+          if (!categoryTotals[category]) {
+            categoryTotals[category] = { sum: 0, count: 0 }
+          }
+          categoryTotals[category].sum += rating
+          categoryTotals[category].count += 1
+        }
+      })
+    }
+  })
+  
+  const categoryAverages: Record<string, number> = {}
+  Object.entries(categoryTotals).forEach(([category, { sum, count }]) => {
+    categoryAverages[category] = sum / count
+  })
+  
+  return categoryAverages
+}
+
 export async function updateCollegeRating(rating: Database['public']['Tables']['college_ratings']['Insert']) {
   const { data, error } = await supabase
     .from('college_ratings')

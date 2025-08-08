@@ -20,7 +20,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { ReviewModal } from "@/components/review-modal"
 import { VerificationBadge } from "@/components/verification-badge"
-import { getCollegeBySlug, getCollegeRatings, getReviewsByCollege, toggleHelpfulVote, checkUserVote } from "@/lib/database"
+import { getCollegeBySlug, getCategoryRatings, getReviewsByCollege, toggleHelpfulVote, checkUserVote } from "@/lib/database"
 import { supabase } from "@/lib/supabase"
 import { searchCollegeByName } from "@/lib/scorecard-api"
 import { ScorecardData } from "@/components/scorecard-data"
@@ -109,14 +109,8 @@ export default function CollegePage({ params }: { params: Promise<{ slug: string
         // Fetch college by slug
         const college = await getCollegeBySlug(slug)
         
-        // Fetch ratings for this college
-        const ratings = await getCollegeRatings(college.id)
-        const categories: Record<string, number> = {}
-        
-        // Convert ratings to the expected format
-        ratings.forEach((rating) => {
-          categories[rating.category.toLowerCase()] = rating.average_rating
-        })
+        // Fetch category ratings for this college
+        const categories = await getCategoryRatings(college.id)
         
         // Fetch reviews for this college
         const collegeReviews = await getReviewsByCollege(college.id)
@@ -326,7 +320,7 @@ export default function CollegePage({ params }: { params: Promise<{ slug: string
 
         {/* Overall Rating Section */}
         <div 
-          className={`mb-12 ${isPageLoaded ? "animate-fade-in-up visible" : ""}`}
+          className={`mb-8 ${isPageLoaded ? "animate-fade-in-up visible" : ""}`}
           style={{ transitionDelay: "400ms" }}
         >
           <div className="flex items-center justify-between mb-6">
@@ -353,6 +347,40 @@ export default function CollegePage({ params }: { params: Promise<{ slug: string
             </p>
           </div>
         </div>
+
+        {/* Category Ratings Section */}
+        {Object.keys(collegeData.categories).length > 0 && (
+          <div 
+            className={`mb-12 ${isPageLoaded ? "animate-fade-in-up visible" : ""}`}
+            style={{ transitionDelay: "500ms" }}
+          >
+            <h2 className="text-2xl font-bold text-[#1F2937] flex items-center gap-3 mb-6">
+              <Tag size={28} weight="duotone" className="text-[#F95F62]" />
+              Category Ratings
+            </h2>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(collegeData.categories).map(([category, rating]) => (
+                  <div key={category} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-[#1F2937] capitalize">
+                        {tagLabels[category as keyof typeof tagLabels] || category}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {renderStars(rating, 16)}
+                      <span className="font-semibold text-[#F95F62]">{rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-[#6B7280] mt-4 text-center">
+                Average ratings for specific aspects of student experience
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Reviews & Data Section */}
         <div
