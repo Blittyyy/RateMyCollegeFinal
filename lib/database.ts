@@ -195,12 +195,19 @@ export async function getCategoryRatings(collegeId: string) {
     .eq('college_id', collegeId)
     .not('category_ratings', 'is', null)
   
-  if (error) throw error
+  if (error) {
+    console.error('Error fetching category ratings:', error)
+    return {}
+  }
+  
+  if (!reviews || reviews.length === 0) {
+    return {}
+  }
   
   const categoryTotals: Record<string, { sum: number; count: number }> = {}
   
   reviews.forEach(review => {
-    if (review.category_ratings) {
+    if (review.category_ratings && typeof review.category_ratings === 'object') {
       Object.entries(review.category_ratings).forEach(([category, rating]) => {
         if (typeof rating === 'number' && rating > 0) {
           if (!categoryTotals[category]) {

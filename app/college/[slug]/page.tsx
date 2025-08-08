@@ -110,13 +110,25 @@ export default function CollegePage({ params }: { params: Promise<{ slug: string
         const college = await getCollegeBySlug(slug)
         
         // Fetch category ratings for this college
-        const categories = await getCategoryRatings(college.id)
+        let categories = {}
+        try {
+          categories = await getCategoryRatings(college.id)
+        } catch (categoryError) {
+          console.error('Error fetching category ratings:', categoryError)
+          // Continue without category ratings
+        }
         
         // Fetch reviews for this college
         const collegeReviews = await getReviewsByCollege(college.id)
         
         // Fetch Scorecard data
-        const scorecard = await searchCollegeByName(college.name)
+        let scorecard = null
+        try {
+          scorecard = await searchCollegeByName(college.name)
+        } catch (scorecardError) {
+          console.error('Error fetching scorecard data:', scorecardError)
+          // Continue without scorecard data
+        }
         
         setCollegeData({
           ...college,
