@@ -356,11 +356,14 @@ export function ReviewModal({ isOpen, onClose, collegeName }: ReviewModalProps) 
                   hoveredStar,
                   setHoveredStar
                 )}
-                {(hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : overallRating) > 0 && (
-                  <div className="text-xl font-semibold text-[#F95F62] tracking-wide">
-                    {starLabels[Math.floor(((hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : overallRating) * 2) - 1)]}
-                  </div>
-                )}
+                {/* Fixed height container for rating text to prevent layout shifts */}
+                <div className="h-8 flex items-center">
+                  {(hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : overallRating) > 0 && (
+                    <div className="text-xl font-semibold text-[#F95F62] tracking-wide">
+                      {starLabels[Math.floor(((hoveredStar ? (hoveredStar.isHalf ? hoveredStar.star - 0.5 : hoveredStar.star) : overallRating) * 2) - 1)]}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
