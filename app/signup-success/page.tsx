@@ -44,11 +44,7 @@ export default function SignupSuccessPage() {
   }, [isCollegeEmail])
 
   const handleManualRedirect = () => {
-    if (isCollegeEmail) {
-      window.location.href = '/dashboard'
-    } else {
-      window.location.href = '/api/auth/linkedin'
-    }
+    window.location.href = '/dashboard'
   }
 
   return (
@@ -106,91 +102,49 @@ export default function SignupSuccessPage() {
                 </div>
                              ) : (
                  <div className="space-y-6">
-                   {linkedinVerified ? (
-                     // Alumni who completed LinkedIn verification
-                     <div className="space-y-6">
-                       <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                         <div className="flex items-start gap-3">
-                           <LinkedinLogo size={24} className="text-green-600 mt-1" weight="fill" />
-                           <div className="text-left">
-                             <h3 className="font-semibold text-green-900 mb-2">LinkedIn Verification Complete! ✅</h3>
-                             <p className="text-green-800 mb-3">
-                               Great! Your LinkedIn verification was successful. Now you just need to verify your email address to complete your account setup.
-                             </p>
-                           </div>
-                         </div>
+                   {/* Alumni who completed LinkedIn verification */}
+                   <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                     <div className="flex items-start gap-3">
+                       <LinkedinLogo size={24} className="text-green-600 mt-1" weight="fill" />
+                       <div className="text-left">
+                         <h3 className="font-semibold text-green-900 mb-2">LinkedIn Verification Complete! ✅</h3>
+                         <p className="text-green-800 mb-3">
+                           Great! Your LinkedIn verification was successful. Now you just need to verify your email address to complete your account setup.
+                         </p>
                        </div>
-                       
-                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                         <div className="flex items-start gap-3">
-                           <Envelope size={24} className="text-blue-600 mt-1" weight="fill" />
-                           <div className="text-left">
-                             <h3 className="font-semibold text-blue-900 mb-2">Check Your Email</h3>
-                             <p className="text-blue-800 mb-3">
-                               We've sent a verification email to <strong>{email}</strong>. 
-                               Please check your inbox and click the verification link to activate your account.
-                             </p>
-                             <div className="bg-blue-100 rounded-lg p-3">
-                               <div className="flex items-center gap-2 text-blue-800 text-sm">
-                                 <Info size={16} />
-                                 <span><strong>Why verify?</strong> Email verification ensures your account is secure and active.</span>
-                               </div>
-                             </div>
+                     </div>
+                   </div>
+                   
+                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                     <div className="flex items-start gap-3">
+                       <Envelope size={24} className="text-blue-600 mt-1" weight="fill" />
+                       <div className="text-left">
+                         <h3 className="font-semibold text-blue-900 mb-2">Check Your Email</h3>
+                         <p className="text-blue-800 mb-3">
+                           We've sent a verification email to <strong>{email}</strong>. 
+                           Please check your inbox and click the verification link to activate your account.
+                         </p>
+                         <div className="bg-blue-100 rounded-lg p-3">
+                           <div className="flex items-center gap-2 text-blue-800 text-sm">
+                             <Info size={16} />
+                             <span><strong>Why verify?</strong> Email verification ensures your account is secure and active.</span>
                            </div>
                          </div>
                        </div>
                      </div>
-                   ) : (
-                     // Alumni who need LinkedIn verification first
-                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                       <div className="flex items-start gap-3">
-                         <LinkedinLogo size={24} className="text-blue-600 mt-1" weight="fill" />
-                         <div className="text-left">
-                           <h3 className="font-semibold text-blue-900 mb-2">LinkedIn Verification Required</h3>
-                           <p className="text-blue-800 mb-3">
-                             Since you're using a non-college email, we need to verify your alumni status through LinkedIn. 
-                             This helps maintain the quality of our reviews.
-                           </p>
-                           <div className="bg-blue-100 rounded-lg p-3">
-                             <div className="flex items-center gap-2 text-blue-800 text-sm">
-                               <Info size={16} />
-                               <span><strong>What happens?</strong> We'll check your LinkedIn profile to verify your education history.</span>
-                             </div>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   )}
+                   </div>
                  </div>
                )}
 
                              {/* Action Buttons */}
                <div className="mt-8 space-y-3">
-                 {isCollegeEmail ? (
-                   <Button
-                     onClick={handleManualRedirect}
-                     className="bg-[#F95F62] hover:bg-[#e54e51] text-white flex items-center gap-2 mx-auto"
-                   >
-                     Go to Dashboard
-                     <ArrowRight size={18} weight="bold" />
-                   </Button>
-                 ) : linkedinVerified ? (
-                   <Button
-                     onClick={handleManualRedirect}
-                     className="bg-[#F95F62] hover:bg-[#e54e51] text-white flex items-center gap-2 mx-auto"
-                   >
-                     Go to Dashboard
-                     <ArrowRight size={18} weight="bold" />
-                   </Button>
-                 ) : (
-                   <Button
-                     onClick={handleManualRedirect}
-                     className="bg-[#F95F62] hover:bg-[#e54e51] text-white flex items-center gap-2 mx-auto"
-                   >
-                     Connect LinkedIn Account
-                     <LinkedinLogo size={18} weight="bold" />
-                   </Button>
-                 )}
+                 <Button
+                   onClick={handleManualRedirect}
+                   className="bg-[#F95F62] hover:bg-[#e54e51] text-white flex items-center gap-2 mx-auto"
+                 >
+                   Go to Dashboard
+                   <ArrowRight size={18} weight="bold" />
+                 </Button>
 
                 <p className="text-sm text-gray-500">
                   Auto-redirecting in {countdown} seconds...
