@@ -102,19 +102,20 @@ async function updateSampleReviews() {
     {
       college_id: college.id,
       user_id: '11111111-1111-1111-1111-111111111111',
+      rating: 4, // Keep for backward compatibility
       overall_rating: 4,
-      tags: ['academics', 'professors', 'campus-life'],
+      tags: ['academics', 'campus-life'],
       category_ratings: {
         'academics': 4.5,
-        'professors': 5,
         'campus-life': 4
       },
-      comment: 'The academics are challenging but rewarding. Professors are excellent and the campus life is vibrant. I love the balance between academic rigor and social opportunities.',
+      comment: 'The academics are challenging but rewarding. The campus life is vibrant and I love the balance between academic rigor and social opportunities.',
       anonymous: false
     },
     {
       college_id: college.id,
       user_id: '22222222-2222-2222-2222-222222222222',
+      rating: 4, // Keep for backward compatibility
       overall_rating: 4,
       tags: ['housing', 'dining', 'safety'],
       category_ratings: {
@@ -128,6 +129,7 @@ async function updateSampleReviews() {
     {
       college_id: college.id,
       user_id: '33333333-3333-3333-3333-333333333333',
+      rating: 5, // Keep for backward compatibility
       overall_rating: 5,
       tags: ['athletics', 'location', 'administration'],
       category_ratings: {

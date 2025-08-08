@@ -42,24 +42,21 @@ interface CollegeWithRatings extends College {
   categories: Record<string, number>
 }
 
-// Available tags for filtering
+// Available tags for filtering (matching add-review page)
 const availableTags = [
-  "dorms", "food", "professors", "party-life", "admin", "campus-vibe", 
-  "mental-health", "athletics", "safety", "location", "academics"
+  "academics", "campus-life", "housing", "dining", "administration", 
+  "safety", "location", "athletics"
 ]
 
 const tagLabels = {
-  dorms: "Dorms",
-  food: "Food", 
-  professors: "Professors",
-  "party-life": "Party Life",
-  admin: "Admin",
-  "campus-vibe": "Campus Vibe",
-  "mental-health": "Mental Health",
-  athletics: "Athletics",
+  academics: "Academics",
+  "campus-life": "Campus Life",
+  housing: "Housing",
+  dining: "Dining",
+  administration: "Administration",
   safety: "Safety",
   location: "Location",
-  academics: "Academics",
+  athletics: "Athletics",
 }
 
 export default function CollegePage({ params }: { params: Promise<{ slug: string }> }) {
