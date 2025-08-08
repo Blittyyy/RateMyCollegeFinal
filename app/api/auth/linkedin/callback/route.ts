@@ -91,13 +91,25 @@ export async function GET(request: NextRequest) {
       console.error('Error checking updated user:', userCheckError)
     }
 
+    // Get user email for success page
+    const { data: userEmail, error: emailError } = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', userId)
+      .single()
+
+    if (emailError) {
+      console.error('Error getting user email:', emailError)
+    }
+
     // If college_id is not set, redirect with a message to manually select college
     if (!updatedUser?.college_id) {
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard?linkedin_success=true&needs_college_selection=true`)
     }
 
-    // Redirect back to dashboard with success
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard?linkedin_success=true`)
+    // Redirect to success page for email verification
+    const email = userEmail?.email || ''
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/signup-success?email=${encodeURIComponent(email)}&type=alumni&linkedin_verified=true`)
 
   } catch (error) {
     console.error('LinkedIn callback error:', error)
