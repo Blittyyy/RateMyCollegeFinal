@@ -102,21 +102,13 @@ export default function SignupPage() {
           localStorage.setItem('supabase.auth.token', JSON.stringify(data.session))
         }
         
-        // Handle different verification paths
-        if (data.redirectToLinkedIn) {
-          console.log('Redirecting to LinkedIn verification...')
-          // For alumni, redirect to LinkedIn verification
-          setTimeout(() => {
-            console.log('Executing LinkedIn redirect...')
-            window.location.href = '/api/auth/linkedin'
-          }, 2000)
-        } else {
-          console.log('No LinkedIn redirect needed (student email)')
-          // Redirect to dashboard or verification page
-          setTimeout(() => {
-            window.location.href = '/dashboard'
-          }, 2000)
-        }
+        // Redirect to success page with email info
+        setTimeout(() => {
+          const redirectUrl = data.redirectToLinkedIn 
+            ? `/signup-success?email=${encodeURIComponent(formData.email)}&type=alumni`
+            : `/signup-success?email=${encodeURIComponent(formData.email)}&type=student`
+          window.location.href = redirectUrl
+        }, 2000)
       } else {
         setError(data.error || 'Signup failed')
         console.error('Signup error:', data)
@@ -172,10 +164,7 @@ export default function SignupPage() {
                 <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <CheckCircleIcon size={16} className="text-green-600" weight="fill" />
                   <span className="text-sm text-green-700">
-                    {formData.email.includes('.edu') 
-                      ? `Account created successfully! Please check your email (${formData.email}) for a verification link.`
-                      : 'Account created! Redirecting to LinkedIn verification to start posting reviews...'
-                    }
+                    Account created successfully! Redirecting to verification instructions...
                   </span>
                 </div>
               )}
